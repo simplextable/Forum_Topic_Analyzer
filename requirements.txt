@@ -1,0 +1,6 @@
+gradio
+transformers
+torch
+sentencepiece
+selenium
+undetected-chromedriver
