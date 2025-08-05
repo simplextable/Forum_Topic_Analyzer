@@ -64,7 +64,7 @@ if __name__ == "__main__":
         for i, entry in enumerate(results, 1):
             print(f"{i}. {entry}\n{'-'*40}")
 
-        with open("data/entries.json", "w", encoding="utf-8") as f:
+        with open("../data/entries.json", "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
         print(f"\n✅ {len(results)} entry 'entries.json' dosyasina yazildi.")
 

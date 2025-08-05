@@ -21,18 +21,18 @@ summarizer_tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
 def scrape_entries(url):
     if not url.startswith("http"):
         return "❌ Invalid URL", None
-    
+
     try:
         entries = get_eksi_entries(url, max_entry=250)
-        with open("entries.json", "w", encoding="utf-8") as f:
+        with open("data/entries.json", "w", encoding="utf-8") as f:
             json.dump(entries, f, ensure_ascii=False, indent=2)
-        return "✅ Scraping successful!", "entries.json"
+        return "✅ Scraping successful!", "data/entries.json"
     except Exception as e:
         return f"❌ Error: {str(e)}", None
 
 def translate_entries():
     try:
-        with open("entries.json", "r", encoding="utf-8") as f:
+        with open("data/entries.json", "r", encoding="utf-8") as f:
             entries = json.load(f)
 
         translated = []
@@ -44,17 +44,17 @@ def translate_entries():
             translated_text = tr_en_tokenizer.decode(gen[0], skip_special_tokens=True)
             translated.append({"original": entry, "translated": translated_text})
 
-        with open("translated_entries.json", "w", encoding="utf-8") as f:
+        with open("data/translated_entries.json", "w", encoding="utf-8") as f:
             json.dump(translated, f, ensure_ascii=False, indent=2)
 
-        return "✅ Translation complete!", "translated_entries.json"
+        return "✅ Translation complete!", "data/translated_entries.json"
 
     except Exception as e:
         return f"❌ Error during translation: {str(e)}", None
 
 def analyze_sentiment():
     try:
-        with open("translated_entries.json", "r", encoding="utf-8") as f:
+        with open("data/translated_entries.json", "r", encoding="utf-8") as f:
             entries = json.load(f)
 
         results = []
@@ -70,16 +70,16 @@ def analyze_sentiment():
             })
 
         df = pd.DataFrame(results)
-        df.to_csv("sentiment_results_en.csv", index=False)
+        df.to_csv("data/sentiment_results_en.csv", index=False)
 
-        return "✅ Sentiment analysis completed!", "sentiment_results_en.csv"
+        return "✅ Sentiment analysis completed!", "data/sentiment_results_en.csv"
 
     except Exception as e:
         return f"❌ Error during sentiment analysis: {str(e)}", None
 
 def summarize_entries():
     try:
-        with open("translated_entries.json", "r", encoding="utf-8") as f:
+        with open("data/translated_entries.json", "r", encoding="utf-8") as f:
             data = json.load(f)
 
         texts = [item["translated"] for item in data if "translated" in item]
@@ -108,10 +108,10 @@ def summarize_entries():
         final_input = " ".join(summaries)
         final_summary = summarizer(final_input, max_length=200, min_length=80, do_sample=False)[0]['summary_text']
 
-        with open("final_summary.txt", "w", encoding="utf-8") as f:
+        with open("data/final_summary.txt", "w", encoding="utf-8") as f:
             f.write(final_summary)
 
-        return final_summary, "final_summary.txt"
+        return final_summary, "data/final_summary.txt"
 
     except Exception as e:
         return f"❌ Error: {str(e)}", None
